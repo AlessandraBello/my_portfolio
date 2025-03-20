@@ -15,10 +15,10 @@
 const ARE_WE_HOME = document.documentElement.classList.contains("home");
 
 let pages = [
-    {url: "", title: "Home"},
-    {url: "./contact", title: "Contact"},
-    {url: "./projects", title: "Projects"},
-    {url: "./resume", title: "Resume"},
+    {url: "./", title: "Home"},
+    {url: "contact", title: "Contact"},
+    {url: "projects", title: "Projects"},
+    {url: "resume", title: "Resume"},
     {url: "https://github.com/AlessandraBello", title: "GitHub"},
     // add the rest of your pages here
 ];
@@ -30,7 +30,7 @@ for (let p of pages) {
     let url = p.url;
     let title = p.title;
     if (!ARE_WE_HOME && !url.startsWith("http")) {
-        url = "../" + url;
+        url = "/my_portfolio/" + url;
     }
     // Create link and add it to nav
     let a = document.createElement("a");
