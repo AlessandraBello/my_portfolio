@@ -4,6 +4,33 @@
 
 <h1>Alessandra Belló Soares</h1>
 
+<script>
+  let profileData = fetch("https://api.github.com/users/AlessandraBello");
+</script>
+
+{#await profileData}
+  <p>Loading...</p>
+{:then response}
+  {#await response.json()}
+    <p>Decoding...</p>
+  {:then data} 
+    <section>
+      <h2>My Github Stats</h2>
+      <dl>
+        <dt>Followers</dt>
+        <dd>{data.followers}</dd>
+        <dt>Following</dt>
+        <dd>{data.following}</dd>
+        <dt>Public Repos</dt>
+        <dd>{data.public_repos}</dd>
+      </dl>
+    </section>
+  {:catch error}
+    <p class="error">Something went wrong: {error.message}</p>
+  {/await}
+  {:catch error}
+    <p class="error">Something went wrong: {error.message}</p>
+{/await}
 <img src = "Alecaca.jpg" alt = "My dog" width="400">
 
 <p>Graduanda em Ciência de Dados e Inteligência Artificial pela Fundação Getulio Vargas e técnica em administração pelo IFRS - Campus Canoas. </p>
