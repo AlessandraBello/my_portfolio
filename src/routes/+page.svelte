@@ -5,6 +5,22 @@
 <h1>Alessandra Belló Soares</h1>
 
 <script>
+  import { onMount } from "svelte";
+
+  let githubData = null;
+  let loading = true;
+  let error = null;
+
+  onMount(async () => {
+      try {
+          const response = await fetch("https://api.github.com/users/AlessandraBello");
+          githubData = await response.json();
+      } catch (err) {
+          error = err;
+      }
+      loading = false;
+  });
+
   let profileData = fetch("https://api.github.com/users/AlessandraBello");
 </script>
 
