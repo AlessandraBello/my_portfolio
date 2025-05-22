@@ -1,4 +1,5 @@
 <script>
+<<<<<<< HEAD
     import * as d3 from "d3";
     import { onMount } from "svelte";
     import {
@@ -28,6 +29,89 @@
         selectedLines,
         v => v.length,
         d => d.type
+=======
+import * as d3 from "d3";
+import { onMount } from "svelte";
+
+let data = [];
+let commits = [];
+let width = 1000, height = 600;
+let margin = {top: 10, right: 10, bottom: 30, left: 20};
+let xAxis, yAxis;
+let yAxisGridlines;
+let cursor = {x: 0, y: 0};
+
+let hoveredIndex = -1;
+$: hoveredCommit = commits[hoveredIndex] ?? hoveredCommit ?? {};
+
+let usableArea = {
+    top: margin.top,
+    right: width - margin.right,
+    bottom: height - margin.bottom,
+    left: margin.left
+};
+usableArea.width = usableArea.right - usableArea.left;
+usableArea.height = usableArea.bottom - usableArea.top;
+
+onMount(async () => {
+	data = await d3.csv("./loc.csv", row => ({
+		...row,
+		line: Number(row.line), // or just +row.line
+		depth: Number(row.depth),
+		length: Number(row.length),
+		date: new Date(row.date + "T00:00" + row.timezone),
+		datetime: new Date(row.datetime)
+	}));
+	commits = d3.groups(data, d => d.commit).map(([commit, lines]) => {
+		let first = lines[0];
+		let {author, date, time, timezone, datetime} = first;
+		let ret = {
+			id: commit,
+			url: "https://github.com/AlessandraBello/my_portfolio/commits/" + commit,
+			author, date, time, timezone, datetime,
+			hourFrac: datetime.getHours() + datetime.getMinutes() / 60,
+			totalLines: lines.length
+		};
+
+		// Like ret.lines = lines
+		// but non-enumerable so it doesn’t show up in JSON.stringify
+		Object.defineProperty(ret, "lines", {
+			value: lines,
+			configurable: true,
+			writable: true,
+			enumerable: false,
+		});
+
+		return ret;
+	});
+
+});
+
+$: minDate = d3.min(commits.map(d => d.date));
+$: maxDate = d3.max(commits.map(d => d.date));
+$: maxDatePlusOne = new Date(maxDate);
+$: maxDatePlusOne.setDate(maxDatePlusOne.getDate() + 1);
+
+$: xScale = d3.scaleTime()
+              .domain([minDate, maxDatePlusOne])
+              .range([usableArea.left, usableArea.right])
+              .nice();
+
+$: yScale = d3.scaleLinear()
+              .domain([24, 0])
+              .range([usableArea.bottom, usableArea.top]);
+
+$: {
+    d3.select(xAxis).call(d3.axisBottom(xScale));
+    d3.select(yAxis).call(d3.axisLeft(yScale).tickFormat(d => String(d % 24).padStart(2, "0") + ":00"));
+}
+
+$: {
+    d3.select(yAxisGridlines).call(
+        d3.axisLeft(yScale)
+          .tickFormat("")
+          .tickSize(-usableArea.width)
+>>>>>>> 15f9d0257dda022908201aa274f81c62792bb235
     );
     $: languageBreakdown = allTypes.map(type => [type, selectedCounts.get(type) || 0]);
     
